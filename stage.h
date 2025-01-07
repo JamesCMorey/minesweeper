@@ -2,7 +2,7 @@
 
 #define STAGE_WIDTH 10
 #define STAGE_HEIGHT 10
-#define DENSITY .2
+#define DENSITY .12
 
 void st_init();
 

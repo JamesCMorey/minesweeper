@@ -7,22 +7,22 @@ static void mine_gen();
 static int count_surround(int row, int col);
 static void num_gen();
 
-#define STAGE_WIDTH 10
-#define STAGE_HEIGHT 10
-#define DENSITY .2
-
 static int stage[STAGE_HEIGHT][STAGE_WIDTH] = { 0 };
 
 void st_init() {
     srand(time(NULL));
 
     mine_gen();
+    st_print();
     num_gen();
+    puts("");
 }
 
 static void num_gen() {
     for (int row = 0; row < STAGE_HEIGHT; row++) {
         for (int col = 0; col < STAGE_WIDTH; col++) {
+            if (stage[row][col] == 9)
+                continue;
             stage[row][col] = count_surround(row, col);
         }
     }
