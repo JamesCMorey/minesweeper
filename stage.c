@@ -1,82 +1,75 @@
 #include "stage.h"
 #include <stdlib.h>
-#include <time.h>
 #include <stdio.h>
+#include <stdint.h>
 
-static void mine_gen();
-static int count_surround(int row, int col);
-static void num_gen();
+typedef enum TileStatus {
+    TILE_CLOSED = 0,
+    TILE_OPENED,
+    TILE_FLAGGED
+} TileStatus;
 
-static int stage[STAGE_HEIGHT][STAGE_WIDTH] = { 0 };
+typedef struct Stage {
+    uint8_t nums[STAGE_HEIGHT][STAGE_WIDTH];
+    TileStatus state[STAGE_HEIGHT][STAGE_WIDTH];
 
-void st_init() {
-    srand(time(NULL));
+} Stage;
 
-    mine_gen();
-    st_print();
-    num_gen();
-    puts("");
-}
+static Stage stage;
 
-static void num_gen() {
-    for (int row = 0; row < STAGE_HEIGHT; row++) {
-        for (int col = 0; col < STAGE_WIDTH; col++) {
-            if (stage[row][col] == 9)
-                continue;
-            stage[row][col] = count_surround(row, col);
-        }
-    }
-}
-
-static int count_surround(int row, int col) {
-    int mine_count = 0;
-
+static inline void increment_surround(int row, int col) {
     for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
-            if (i >= STAGE_WIDTH || j >= STAGE_HEIGHT || (!i && !j))
+            if (STAGE_WIDTH <= i + row || i + row < 0) /* Invalid row */
+                continue;
+            if (STAGE_HEIGHT <= j + col || j + col < 0) /* Invalid col */
+                continue;
+            if (!(i || j)) /* Center tile */
                 continue;
 
-            if (stage[row + i][col + j] == 9)
-                mine_count++;
+            if (stage.nums[row + i][col + j] != 9)
+                ++stage.nums[row + i][col  + j];
         }
     }
-
-    return mine_count;
 }
 
-static void mine_gen() {
-    int x, y;
+void stage_init() {
+    int row, col;
     int mines = 0;
     while (mines < DENSITY * STAGE_WIDTH * STAGE_HEIGHT) {
-        x = rand() % STAGE_WIDTH;
-        y = rand() % STAGE_HEIGHT;
+        row = rand() % STAGE_HEIGHT;
+        col = rand() % STAGE_WIDTH;
 
-        if (stage[y][x] != 9) {
-            stage[y][x] = 9;
+        if (stage.nums[row][col] != 9) {
+            stage.nums[row][col] = 9;
+            increment_surround(row, col);
             mines++;
         }
     }
 }
 
-void st_print() {
+void stage_print() {
     for (int r = 0; r < STAGE_HEIGHT; r++) {
         for (int c = 0; c < STAGE_WIDTH; c++) {
-            printf("%d ", stage[r][c]);
+            printf("%d ", stage.nums[r][c]);
         }
         puts("");
     }
-
 }
 
-/******************************************************************************/
-/*                                User Actions                                */
-/******************************************************************************/
-
-void st_place_flag(int x, int y) {
-
+/* USER ACTIONS */
+void place_flag(int row, int col) {
+    if(stage.state[row][col] != TILE_OPENED)
+        stage.state[row][col] = TILE_FLAGGED;
 }
 
-/* You died */
-void st_step(int x, int y) {
+int stage_step(int row, int col) {
+    if (stage.nums[row][col] == TILE_FLAGGED)
+        return STEP_CLEAR;
 
+    if (stage.nums[row][col] == 9)
+        return STEP_MINE;
+
+    stage.state[row][col] = TILE_OPENED;
+    return STEP_CLEAR;
 }

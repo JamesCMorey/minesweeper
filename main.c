@@ -1,12 +1,13 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "stage.h"
 
 
 int main() {
 
-    st_init();
-    st_print();
+    srand(time(NULL));
+    stage_init();
+    stage_print();
 
     return 0;
 }

@@ -4,14 +4,14 @@
 #define STAGE_HEIGHT 10
 #define DENSITY .12
 
-void st_init();
+typedef enum StepType {
+    STEP_CLEAR = 0,
+    STEP_MINE,
+} StepType;
 
-/******************************************************************************/
-/*                                User Actions                                */
-/******************************************************************************/
+void stage_print();
 
-void st_place_flag(int x, int y);
+void stage_init();
 
-/* You died */
-void st_step(int x, int y);
-void st_print();
+void place_flag(int row, int col);
+int stage_step(int row, int col);
