@@ -2,6 +2,8 @@
 
 #include "stage.h"
 
+#define TILE_SIZE 50
+
 int media_init();
 void media_cleanup();
 void resources_init();

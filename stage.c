@@ -58,13 +58,14 @@ void stage_print() {
 
 /* USER ACTIONS */
 void place_flag(int row, int col) {
-    if(stage.state[row][col] != TILE_OPENED)
+    if(stage.state[row][col] == TILE_CLOSED)
         stage.state[row][col] = TILE_FLAGGED;
+    else if (stage.state[row][col] == TILE_FLAGGED){
+        stage.state[row][col] = TILE_CLOSED;
+    }
 }
 
-StepType stage_step() {
-    int row = stage.selected.row;
-    int col = stage.selected.col;
+StepType stage_step(int row, int col) {
     if (stage.state[row][col] == TILE_FLAGGED)
         return STEP_CLEAR;
 
@@ -72,6 +73,24 @@ StepType stage_step() {
         return STEP_MINE;
 
     stage.state[row][col] = TILE_OPENED;
+
+    if (stage.nums[row][col] == 0) {
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (STAGE_WIDTH <= i + row || i + row < 0) /* Invalid row */
+                    continue;
+                if (STAGE_HEIGHT <= j + col || j + col < 0) /* Invalid col */
+                    continue;
+                if (!(i || j)) /* Center tile */
+                    continue;
+
+                if (stage.nums[row + i][col + j] == 0
+                    && stage.state[row + i][col + j] == TILE_CLOSED)
+                    stage_step(row + i, col +j);
+            }
+        }
+    }
+
     return STEP_CLEAR;
 }
 

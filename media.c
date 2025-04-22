@@ -97,7 +97,6 @@ void resources_cleanup() {
     TTF_Quit();
 }
 
-#define TILE_SIZE 50
 #define OFFSET(idx) (TILE_SIZE + 5) * (idx)
 void render_stage(const Stage *stage) {
     for (int row = 0; row < STAGE_HEIGHT; ++row) {
@@ -134,7 +133,6 @@ void render_stage(const Stage *stage) {
             if (num > 0 && stage->state[row][col] == TILE_OPENED) {
                 SDL_RenderCopy(media.r, num_textures[num - 1], NULL, &rect);
             }
-
         }
     }
 }

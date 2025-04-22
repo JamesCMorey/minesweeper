@@ -1,11 +1,10 @@
 #pragma once
 
-#include <signal.h>
 #include <stdint.h>
 
 #define STAGE_WIDTH 10
 #define STAGE_HEIGHT 10
-#define DENSITY .12
+#define DENSITY .20
 
 typedef enum {
     STEP_CLEAR = 0,
@@ -40,7 +39,7 @@ extern Stage stage;
 void stage_init();
 
 void place_flag(int row, int col);
-StepType stage_step();
+StepType stage_step(int row, int col);
 const Stage *stage_read();
 void move_selection(MoveSelected move);
 Coords coords_selected();
