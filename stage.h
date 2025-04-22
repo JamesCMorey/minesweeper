@@ -7,7 +7,7 @@
 #define STAGE_HEIGHT 10
 #define DENSITY .12
 
-typedef enum StepType {
+typedef enum {
     STEP_CLEAR = 0,
     STEP_MINE,
 } StepType;
@@ -40,7 +40,7 @@ extern Stage stage;
 void stage_init();
 
 void place_flag(int row, int col);
-int stage_step(int row, int col);
+StepType stage_step();
 const Stage *stage_read();
 void move_selection(MoveSelected move);
 Coords coords_selected();

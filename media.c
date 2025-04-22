@@ -1,14 +1,24 @@
 #include "media.h"
 #include "SDL_render.h"
+#include "SDL_surface.h"
 #include "SDL_video.h"
 #include "stage.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #define WIN_TITLE "Minesweeper Clone"
 #define WIN_WIDTH 1024
 #define WIN_HEIGHT 720
+#define TEXT_SIZE 30
+
+#define RED (SDL_Color){255, 0, 0, 255}
+#define BLUE {0, 255, 0, 255}
+#define GREEN {0, 0, 255, 255}
+
+SDL_Texture *num_textures[9];
 
 static struct {
     SDL_Window *win;
@@ -16,11 +26,18 @@ static struct {
     struct {
         int r, g, b, a;
     } bg;
+    TTF_Font *font;
 } media;
 
 int media_init() {
     if (SDL_Init(SDL_INIT_EVERYTHING)) {
         fprintf(stderr, "ERROR: SDL_Init failed on line %d with error %s", 
+                __LINE__, SDL_GetError());
+        return 1;
+    }
+
+    if (TTF_Init()) {
+        fprintf(stderr, "ERROR: TTF_Init failed on line %d with error %s", 
                 __LINE__, SDL_GetError());
         return 1;
     }
@@ -43,10 +60,41 @@ int media_init() {
     return 0;
 }
 
+void resources_init() {
+    media.font = TTF_OpenFont("fonts/freesansbold.ttf", TEXT_SIZE);
+    if (!media.font) {
+        fprintf(stderr, "Error creating Font: %s\n", TTF_GetError());
+        return;
+    }
+
+    for (int i = 1; i <= 9; ++i) {
+        char num_str[2];
+        sprintf(num_str, "%d", i);
+        SDL_Surface *surface = TTF_RenderText_Blended(media.font, num_str, RED);
+        if (!surface) {
+            fprintf(stderr, "Error creating Surface: %s\n", SDL_GetError());
+            return;
+        }
+
+        num_textures[i - 1] = SDL_CreateTextureFromSurface(media.r, surface);
+        SDL_FreeSurface(surface);
+        if (!num_textures[i - 1]) {
+            fprintf(stderr, "Error creating Texture: %s\n", SDL_GetError());
+            return;
+        }
+
+    }
+}
+
 void media_cleanup() {
     SDL_DestroyRenderer(media.r);
     SDL_DestroyWindow(media.win);
     SDL_Quit();
+}
+
+void resources_cleanup() {
+    TTF_CloseFont(media.font);
+    TTF_Quit();
 }
 
 #define TILE_SIZE 50
@@ -54,12 +102,15 @@ void media_cleanup() {
 void render_stage(const Stage *stage) {
     for (int row = 0; row < STAGE_HEIGHT; ++row) {
         for (int col = 0; col < STAGE_WIDTH; ++col) {
+            /* Outline selected tile */
             if (stage->selected.row == row && stage->selected.col == col) {
                 SDL_SetRenderDrawColor(media.r, 128, 0, 0, 255);
                 SDL_Rect rect = {OFFSET(col) - 2, OFFSET(row) - 2,
                                  TILE_SIZE + 4, TILE_SIZE + 4};
                 SDL_RenderFillRect(media.r, &rect);
             }
+
+            /* Draw tile backgrounds */
             switch(stage->state[row][col]) {
                 case TILE_OPENED:
                     SDL_SetRenderDrawColor(media.r, 128, 128, 128, 255);
@@ -77,6 +128,13 @@ void render_stage(const Stage *stage) {
 
             SDL_Rect rect = {OFFSET(col), OFFSET(row), TILE_SIZE, TILE_SIZE};
             SDL_RenderFillRect(media.r, &rect);
+
+            /* Draw numbers */
+            int num = stage->nums[row][col];
+            if (num > 0 && stage->state[row][col] == TILE_OPENED) {
+                SDL_RenderCopy(media.r, num_textures[num - 1], NULL, &rect);
+            }
+
         }
     }
 }

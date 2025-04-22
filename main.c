@@ -11,9 +11,11 @@ int main() {
     stage_init();
     stage_print();
     media_init();
+    resources_init();
 
     eventloop_run();
 
+    resources_cleanup();
     media_cleanup();
     return 0;
 }

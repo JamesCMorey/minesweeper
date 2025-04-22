@@ -28,6 +28,10 @@ void eventloop_run() {
                     case SDL_SCANCODE_W:
                         move_selection(MOVE_UP);
                         break;
+                    case SDL_SCANCODE_SPACE:
+                        if (stage_step() == STEP_MINE)
+                            ; /* add handler */
+                        break;
                     default:
                         break;
                 }

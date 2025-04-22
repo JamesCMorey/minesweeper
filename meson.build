@@ -6,5 +6,5 @@ executable('sweeper',
   'stage.c',
   'media.c',
   'evloop.c',
-  dependencies : dependency('SDL2')
+  dependencies : [dependency('SDL2'), dependency('SDL2_ttf') ]
 )

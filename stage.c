@@ -62,8 +62,10 @@ void place_flag(int row, int col) {
         stage.state[row][col] = TILE_FLAGGED;
 }
 
-int stage_step(int row, int col) {
-    if (stage.nums[row][col] == TILE_FLAGGED)
+StepType stage_step() {
+    int row = stage.selected.row;
+    int col = stage.selected.col;
+    if (stage.state[row][col] == TILE_FLAGGED)
         return STEP_CLEAR;
 
     if (stage.nums[row][col] == 9)
@@ -72,6 +74,7 @@ int stage_step(int row, int col) {
     stage.state[row][col] = TILE_OPENED;
     return STEP_CLEAR;
 }
+
 
 const Stage *stage_read() {
     return &stage;
