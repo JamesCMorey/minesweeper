@@ -9,6 +9,7 @@
 typedef enum {
     STEP_CLEAR = 0,
     STEP_MINE,
+    STEP_BLOCKED
 } StepType;
 
 typedef enum {

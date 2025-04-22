@@ -21,6 +21,9 @@ void eventloop_run() {
                 if (ev.button.button == SDL_BUTTON_LEFT) {
                     stage_step(row, col);
                 }
+                else if (ev.button.button == SDL_BUTTON_RIGHT) {
+                    place_flag(row, col);
+                }
                 break;
 
             case SDL_KEYDOWN: /* Keyboard */

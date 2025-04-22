@@ -65,30 +65,39 @@ void place_flag(int row, int col) {
     }
 }
 
+
+static void stage_auto_step(int row, int col) {
+    stage.state[row][col] = TILE_OPENED;
+
+    for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+            if (STAGE_WIDTH <= i + row || i + row < 0) /* Invalid row */
+                continue;
+            if (STAGE_HEIGHT <= j + col || j + col < 0) /* Invalid col */
+                continue;
+            if (!(i || j)) /* Center tile */
+                continue;
+
+            if (stage.nums[row + i][col + j] == 0
+                && stage.state[row + i][col + j] == TILE_CLOSED)
+                stage_auto_step(row + i, col +j);
+            else if (stage.nums[row + i][col + j] != 9 && stage.nums[row + i][col + j] != 0) {
+                stage_step(row + i, col + j);
+            }
+        }
+    }
+}
+
 StepType stage_step(int row, int col) {
     if (stage.state[row][col] == TILE_FLAGGED)
-        return STEP_CLEAR;
+        return STEP_BLOCKED;
 
     if (stage.nums[row][col] == 9)
         return STEP_MINE;
 
     stage.state[row][col] = TILE_OPENED;
-
     if (stage.nums[row][col] == 0) {
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                if (STAGE_WIDTH <= i + row || i + row < 0) /* Invalid row */
-                    continue;
-                if (STAGE_HEIGHT <= j + col || j + col < 0) /* Invalid col */
-                    continue;
-                if (!(i || j)) /* Center tile */
-                    continue;
-
-                if (stage.nums[row + i][col + j] == 0
-                    && stage.state[row + i][col + j] == TILE_CLOSED)
-                    stage_step(row + i, col +j);
-            }
-        }
+        stage_auto_step(row, col);
     }
 
     return STEP_CLEAR;
