@@ -2,20 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
+#include <stdbool.h>
 
-typedef enum TileStatus {
-    TILE_CLOSED = 0,
-    TILE_OPENED,
-    TILE_FLAGGED
-} TileStatus;
-
-typedef struct Stage {
-    uint8_t nums[STAGE_HEIGHT][STAGE_WIDTH];
-    TileStatus state[STAGE_HEIGHT][STAGE_WIDTH];
-
-} Stage;
-
-static Stage stage;
+Stage stage = { 0 };
 
 static inline void increment_surround(int row, int col) {
     for (int i = -1; i <= 1; i++) {
@@ -46,6 +36,15 @@ void stage_init() {
             mines++;
         }
     }
+    stage.selected.row = 1;
+    stage.selected.col = 1;
+
+    stage.state[5][5] = TILE_OPENED;
+    stage.state[6][5] = TILE_FLAGGED;
+}
+
+void stage_clear() {
+    memset(&stage, 0, sizeof(stage));
 }
 
 void stage_print() {
@@ -72,4 +71,33 @@ int stage_step(int row, int col) {
 
     stage.state[row][col] = TILE_OPENED;
     return STEP_CLEAR;
+}
+
+const Stage *stage_read() {
+    return &stage;
+}
+
+void move_selection(MoveSelected move) {
+    switch(move) {
+        case MOVE_UP:
+            if (stage.selected.row > 0)
+                --stage.selected.row;
+            break;
+        case MOVE_DOWN:
+            if (stage.selected.row < STAGE_HEIGHT - 1)
+                ++stage.selected.row;
+            break;
+        case MOVE_LEFT:
+            if (stage.selected.col > 0)
+                --stage.selected.col;
+            break;
+        case MOVE_RIGHT:
+            if (stage.selected.col < STAGE_WIDTH - 1)
+                ++stage.selected.col;
+            break;
+    }
+}
+
+Coords coords_selected() {
+    return (Coords) { stage.selected.row, stage.selected.col };
 }
