@@ -26,7 +26,7 @@ static inline void increment_surround(int row, int col) {
 void stage_init() {
     int row, col;
     int mines = 0;
-    while (mines < DENSITY * STAGE_WIDTH * STAGE_HEIGHT) {
+    while (mines < MINE_NUM) {
         row = rand() % STAGE_HEIGHT;
         col = rand() % STAGE_WIDTH;
 
@@ -38,9 +38,6 @@ void stage_init() {
     }
     stage.selected.row = 1;
     stage.selected.col = 1;
-
-    stage.state[5][5] = TILE_OPENED;
-    stage.state[6][5] = TILE_FLAGGED;
 }
 
 void stage_clear() {
@@ -65,7 +62,6 @@ void place_flag(int row, int col) {
     }
 }
 
-
 static void stage_auto_step(int row, int col) {
     stage.state[row][col] = TILE_OPENED;
 
@@ -79,9 +75,11 @@ static void stage_auto_step(int row, int col) {
                 continue;
 
             if (stage.nums[row + i][col + j] == 0
-                && stage.state[row + i][col + j] == TILE_CLOSED)
+                && stage.state[row + i][col + j] == TILE_CLOSED) {
+                ++stage.tiles_opened;
                 stage_auto_step(row + i, col +j);
-            else if (stage.nums[row + i][col + j] != 9 && stage.nums[row + i][col + j] != 0) {
+            }
+            else if (stage.nums[row + i][col + j] != 9 && stage.nums[row + i][col + j] != 0 && stage.state[row + i][col + j] != TILE_OPENED) {
                 stage_step(row + i, col + j);
             }
         }
@@ -89,13 +87,14 @@ static void stage_auto_step(int row, int col) {
 }
 
 StepType stage_step(int row, int col) {
-    if (stage.state[row][col] == TILE_FLAGGED)
+    if (stage.state[row][col] == TILE_FLAGGED || stage.state[row][col] == TILE_OPENED)
         return STEP_BLOCKED;
 
     if (stage.nums[row][col] == 9)
         return STEP_MINE;
 
     stage.state[row][col] = TILE_OPENED;
+    ++stage.tiles_opened;
     if (stage.nums[row][col] == 0) {
         stage_auto_step(row, col);
     }

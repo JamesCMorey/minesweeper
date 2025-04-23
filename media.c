@@ -18,7 +18,8 @@
 #define BLUE {0, 255, 0, 255}
 #define GREEN {0, 0, 255, 255}
 
-SDL_Texture *num_textures[9];
+static SDL_Texture *num_textures[9];
+static SDL_Texture *win_text;
 
 static struct {
     SDL_Window *win;
@@ -82,7 +83,19 @@ void resources_init() {
             fprintf(stderr, "Error creating Texture: %s\n", SDL_GetError());
             return;
         }
+    }
 
+    SDL_Surface *surface = TTF_RenderText_Blended(media.font, "You win", RED);
+    if (!surface) {
+        fprintf(stderr, "Error creating Surface: %s\n", SDL_GetError());
+        return;
+    }
+
+    win_text = SDL_CreateTextureFromSurface(media.r, surface);
+    SDL_FreeSurface(surface);
+    if (!win_text) {
+        fprintf(stderr, "Error creating Texture: %s\n", SDL_GetError());
+        return;
     }
 }
 
@@ -135,6 +148,11 @@ void render_stage(const Stage *stage) {
             }
         }
     }
+
+    if (stage->tiles_opened >= STAGE_HEIGHT * STAGE_WIDTH - MINE_NUM) {
+        SDL_Rect rect = {500, 100, 100, 100};
+        SDL_RenderCopy(media.r, win_text, NULL, &rect);
+    }
 }
 
 void draw_frame(const Stage *stage) {
@@ -151,4 +169,7 @@ void renderer_color(int r, int g, int b, int a) {
     media.bg.g = g;
     media.bg.b = b;
     media.bg.a = a;
+}
+
+void show_win() {
 }

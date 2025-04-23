@@ -11,3 +11,5 @@ void resources_cleanup();
 
 void draw_frame(const Stage *stage);
 void renderer_color(int r, int g, int b, int a);
+
+void show_win();

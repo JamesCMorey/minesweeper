@@ -5,6 +5,7 @@
 #define STAGE_WIDTH 10
 #define STAGE_HEIGHT 10
 #define DENSITY .20
+#define MINE_NUM (int)(STAGE_WIDTH * STAGE_HEIGHT * DENSITY)
 
 typedef enum {
     STEP_CLEAR = 0,
@@ -32,6 +33,7 @@ typedef struct  {
 typedef struct {
     uint8_t nums[STAGE_HEIGHT][STAGE_WIDTH];
     TileStatus state[STAGE_HEIGHT][STAGE_WIDTH];
+    int tiles_opened;
     Coords selected;
 } Stage;
 
