@@ -10,13 +10,17 @@
 #include <stdlib.h>
 
 #define WIN_TITLE "Minesweeper Clone"
-#define WIN_WIDTH 1024
-#define WIN_HEIGHT 720
 #define TEXT_SIZE 30
 
-#define RED (SDL_Color){255, 0, 0, 255}
-#define BLUE {0, 255, 0, 255}
-#define GREEN {0, 0, 255, 255}
+#define CREATE_COLOR(r, g, b, a) (SDL_Color){r, g, b, a}
+#define RED         CREATE_COLOR(255, 0, 0, 255)
+#define GREEN       CREATE_COLOR(0, 255, 0, 255)
+#define BLUE        CREATE_COLOR(0, 0, 255, 255)
+#define YELLOW      CREATE_COLOR(255, 255, 0, 255)
+#define CYAN        CREATE_COLOR(0, 255, 255, 255)
+#define MAGENTA     CREATE_COLOR(255, 0, 255, 255)
+#define ORANGE      CREATE_COLOR(255, 165, 0, 255)
+#define PURPLE      CREATE_COLOR(128, 0, 128, 255)
 
 static SDL_Texture *num_textures[9];
 static SDL_Texture *win_text;
@@ -71,7 +75,39 @@ void resources_init() {
     for (int i = 1; i <= 9; ++i) {
         char num_str[2];
         sprintf(num_str, "%d", i);
-        SDL_Surface *surface = TTF_RenderText_Blended(media.font, num_str, RED);
+        SDL_Surface *surface;
+
+        #define SURFACE_COLOR(color) surface = TTF_RenderText_Blended(media.font, num_str, color)
+        switch(i) {
+            case 1:
+                SURFACE_COLOR(RED);
+                break;
+            case 2:
+                SURFACE_COLOR(GREEN);
+                break;
+            case 3:
+                SURFACE_COLOR(BLUE);
+                break;
+            case 4:
+                SURFACE_COLOR(PURPLE);
+                break;
+            case 5:
+                SURFACE_COLOR(CYAN);
+                break;
+            case 6:
+                SURFACE_COLOR(ORANGE);
+                break;
+            case 7:
+                SURFACE_COLOR(MAGENTA);
+                break;
+            case 8:
+                SURFACE_COLOR(YELLOW);
+                break;
+            default:
+                SURFACE_COLOR(RED);
+                break;
+        }
+
         if (!surface) {
             fprintf(stderr, "Error creating Surface: %s\n", SDL_GetError());
             return;
@@ -110,8 +146,6 @@ void resources_cleanup() {
     TTF_Quit();
 }
 
-#define STAGE_START_X WIN_WIDTH/2 - ((TILE_SIZE + 5) * STAGE_WIDTH)/2
-#define STAGE_START_Y WIN_HEIGHT/2 - ((TILE_SIZE + 5) * STAGE_HEIGHT)/2
 #define OFFSET(idx) (TILE_SIZE + 5) * (idx)
 void render_stage(const Stage *stage) {
     for (int row = 0; row < STAGE_HEIGHT; ++row) {

@@ -16,9 +16,9 @@ void eventloop_run() {
                 break;
 
             case SDL_MOUSEBUTTONDOWN:;
-                int row = ev.button.y / (TILE_SIZE + 5);
-                int col = ev.button.x / (TILE_SIZE + 5);
-                if (ev.button.button == SDL_BUTTON_LEFT) {
+                int row = (ev.button.y - STAGE_START_Y) / (TILE_SIZE + 5);
+                int col = (ev.button.x - STAGE_START_X) / (TILE_SIZE + 5);
+                if (ev.button.button == SDL_BUTTON_LEFT && row >= 0 && col >= 0) {
                     stage_step(row, col);
                 }
                 else if (ev.button.button == SDL_BUTTON_RIGHT) {
