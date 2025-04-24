@@ -110,6 +110,8 @@ void resources_cleanup() {
     TTF_Quit();
 }
 
+#define STAGE_START_X WIN_WIDTH/2 - ((TILE_SIZE + 5) * STAGE_WIDTH)/2
+#define STAGE_START_Y WIN_HEIGHT/2 - ((TILE_SIZE + 5) * STAGE_HEIGHT)/2
 #define OFFSET(idx) (TILE_SIZE + 5) * (idx)
 void render_stage(const Stage *stage) {
     for (int row = 0; row < STAGE_HEIGHT; ++row) {
@@ -117,7 +119,7 @@ void render_stage(const Stage *stage) {
             /* Outline selected tile */
             if (stage->selected.row == row && stage->selected.col == col) {
                 SDL_SetRenderDrawColor(media.r, 128, 0, 0, 255);
-                SDL_Rect rect = {OFFSET(col) - 2, OFFSET(row) - 2,
+                SDL_Rect rect = {STAGE_START_X + OFFSET(col) - 2, STAGE_START_Y + OFFSET(row) - 2,
                                  TILE_SIZE + 4, TILE_SIZE + 4};
                 SDL_RenderFillRect(media.r, &rect);
             }
@@ -138,7 +140,7 @@ void render_stage(const Stage *stage) {
                     break;
             }
 
-            SDL_Rect rect = {OFFSET(col), OFFSET(row), TILE_SIZE, TILE_SIZE};
+            SDL_Rect rect = {STAGE_START_X + OFFSET(col), STAGE_START_Y + OFFSET(row), TILE_SIZE, TILE_SIZE};
             SDL_RenderFillRect(media.r, &rect);
 
             /* Draw numbers */
