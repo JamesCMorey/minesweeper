@@ -90,8 +90,9 @@ StepType stage_step(int row, int col) {
     if (stage.state[row][col] == TILE_FLAGGED || stage.state[row][col] == TILE_OPENED)
         return STEP_BLOCKED;
 
-    if (stage.nums[row][col] == 9)
+    if (stage.nums[row][col] == 9) {
         return STEP_MINE;
+    }
 
     stage.state[row][col] = TILE_OPENED;
     ++stage.tiles_opened;

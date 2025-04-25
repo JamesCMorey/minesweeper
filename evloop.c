@@ -6,6 +6,8 @@
 
 void eventloop_run() {
     const Stage *stage = stage_read();
+
+    bool mouse_down = false;
     bool running = true;
     while (running) {
         SDL_Event ev;
@@ -16,6 +18,11 @@ void eventloop_run() {
                 break;
 
             case SDL_MOUSEBUTTONDOWN:;
+                if (!mouse_down)
+                    mouse_down = true;
+                else
+                    break;
+
                 int row = (ev.button.y - STAGE_START_Y) / (TILE_SIZE + 5);
                 int col = (ev.button.x - STAGE_START_X) / (TILE_SIZE + 5);
                 if (ev.button.button == SDL_BUTTON_LEFT && row >= 0 && col >= 0) {
@@ -25,6 +32,8 @@ void eventloop_run() {
                     place_flag(row, col);
                 }
                 break;
+            case SDL_MOUSEBUTTONUP:
+                mouse_down = false;
 
             case SDL_KEYDOWN: /* Keyboard */
                 switch(ev.key.keysym.scancode) {

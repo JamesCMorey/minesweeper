@@ -184,9 +184,16 @@ void render_stage(const Stage *stage) {
             }
         }
     }
+}
 
+void render_game_state(const Stage *stage) {
     if (stage->tiles_opened >= STAGE_HEIGHT * STAGE_WIDTH - MINE_NUM) {
-        SDL_Rect rect = {500, 100, 100, 100};
+        SDL_SetRenderDrawColor(media.r, 100, 100, 100, 255);
+        SDL_Rect bg_rect = {STAGE_START_X + STAGE_WIDTH_X/2 - 230/2 - 3, STAGE_START_Y + STAGE_HEIGHT_Y/2 - 100/2 - 3, 230, 100};
+        SDL_RenderFillRect(media.r, &bg_rect);
+
+        SDL_SetRenderDrawColor(media.r, 255, 100, 100, 255);
+        SDL_Rect rect = {STAGE_START_X + STAGE_WIDTH_X/2 - 200/2 - 3, STAGE_START_Y + STAGE_HEIGHT_Y/2 - 100/2 + 3, 200, 100};
         SDL_RenderCopy(media.r, win_text, NULL, &rect);
     }
 }
@@ -196,6 +203,7 @@ void draw_frame(const Stage *stage) {
     SDL_RenderClear(media.r);
 
     render_stage(stage);
+    render_game_state(stage);
 
     SDL_RenderPresent(media.r);
 }
