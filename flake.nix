@@ -1,5 +1,5 @@
 {
-  description = "Minesweeper with ninja build system";
+  description = "Minesweeper";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs";
   inputs.flake-utils.url = "github:numtide/flake-utils";
