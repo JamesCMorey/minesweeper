@@ -1,3 +1,4 @@
 #pragma once
 
-void eventloop_run();
+#include "board.h"
+void eventloop_run(Board *b);

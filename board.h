@@ -40,17 +40,22 @@ typedef enum {
 
 typedef struct {
     int rows, cols;
-    Tile **board;
+    float density;
     int tiles_opened;
+    Tile **board;
 //    Coords selected;
 } Board;
 
-extern Board board;
+bool board_flagged(const Board *b, int row, int col);
+bool board_opened(const Board *b, int row, int col);
+uint8_t board_num(const Board *b, int row, int col);
+int board_total_opened(const Board *b);
+int board_total_mines(const Board *b);
 
 Board *board_new(int rows, int cols, float density);
 
 void board_toggle_flag(Board *b, int row, int col);
-StepType board_step(Board *b, int row, int col);
+StepType board_open(Board *b, int row, int col);
 Tile **board_read();
 //void move_selection(MoveSelected move);
 //Coords coords_selected();

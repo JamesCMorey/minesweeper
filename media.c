@@ -1,8 +1,9 @@
 #include "media.h"
-#include "SDL_render.h"
-#include "SDL_surface.h"
-#include "SDL_video.h"
-#include "stage.h"
+//#include "SDL_render.h"
+//#include "SDL_surface.h"
+//#include "SDL_video.h"
+#include "board.h"
+#include "layout.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <stdio.h>
@@ -147,63 +148,68 @@ void resources_cleanup() {
 }
 
 #define OFFSET(idx) (TILE_SIZE + 5) * (idx)
-void render_stage(const Stage *stage) {
-    for (int row = 0; row < STAGE_HEIGHT; ++row) {
-        for (int col = 0; col < STAGE_WIDTH; ++col) {
+void render_stage(const Board *b) {
+    for (int row = 0; row < b->rows; ++row) {
+        for (int col = 0; col < b->cols; ++col) {
             /* Outline selected tile */
-            if (stage->selected.row == row && stage->selected.col == col) {
-                SDL_SetRenderDrawColor(media.r, 128, 0, 0, 255);
-                SDL_Rect rect = {STAGE_START_X + OFFSET(col) - 2, STAGE_START_Y + OFFSET(row) - 2,
-                                 TILE_SIZE + 4, TILE_SIZE + 4};
-                SDL_RenderFillRect(media.r, &rect);
-            }
+            //if (stage->selected.row == row && b->selected.col == col) {
+            //    SDL_SetRenderDrawColor(media.r, 128, 0, 0, 255);
+            //    SDL_Rect rect = {STAGE_START_X + OFFSET(col) - 2, STAGE_START_Y + OFFSET(row) - 2,
+            //                     TILE_SIZE + 4, TILE_SIZE + 4};
+            //    SDL_RenderFillRect(media.r, &rect);
+            //}
 
-            /* Draw tile backgrounds */
-            switch(stage->state[row][col]) {
-                case TILE_OPENED:
-                    SDL_SetRenderDrawColor(media.r, 128, 128, 128, 255);
-                    break;
-                case TILE_FLAGGED:
-                    SDL_SetRenderDrawColor(media.r, 72, 0, 0, 255);
-                    break;
-                case TILE_CLOSED:
-                    SDL_SetRenderDrawColor(media.r, 52, 52, 52, 255);
-                    break;
-                default:
-                    fprintf(stderr, "Tile has invalid status\n");
-                    break;
-            }
+            /* Set tile color */
+            if (board_opened(b, row, col)) SDL_SetRenderDrawColor(media.r, 128, 128, 128, 255);
+            else if (board_flagged(b, row, col)) SDL_SetRenderDrawColor(media.r, 72, 0, 0, 255);
+            else SDL_SetRenderDrawColor(media.r, 52, 52, 52, 255);
 
-            SDL_Rect rect = {STAGE_START_X + OFFSET(col), STAGE_START_Y + OFFSET(row), TILE_SIZE, TILE_SIZE};
+            /* Draw tile background*/
+            SDL_Rect rect = {
+                board_start_x(b) + OFFSET(col),
+                board_start_y(b) + OFFSET(row),
+                TILE_SIZE,
+                TILE_SIZE
+            };
             SDL_RenderFillRect(media.r, &rect);
 
-            /* Draw numbers */
-            int num = stage->nums[row][col];
-            if (num > 0 && stage->state[row][col] == TILE_OPENED) {
+            /* Draw tile number over background */
+            int num = board_num(b, row, col);
+            if (num > 0 && board_opened(b, row, col))
                 SDL_RenderCopy(media.r, num_textures[num - 1], NULL, &rect);
-            }
         }
     }
 }
 
-void render_game_state(const Stage *stage) {
-    if (stage->tiles_opened >= STAGE_HEIGHT * STAGE_WIDTH - MINE_NUM) {
+void render_game_state(const Board *b) {
+    if (board_total_opened(b) >= b->rows * b->cols - board_total_mines(b)) {
         SDL_SetRenderDrawColor(media.r, 100, 100, 100, 255);
-        SDL_Rect bg_rect = {STAGE_START_X + STAGE_WIDTH_X/2 - 230/2 - 3, STAGE_START_Y + STAGE_HEIGHT_Y/2 - 100/2 - 3, 230, 100};
+        SDL_Rect bg_rect = {
+            board_start_x(b) + board_width_x(b)/2 - 230/2 - 3, 
+            board_start_y(b) + board_height_y(b)/2 - 100/2 - 3, 
+            230,
+            100
+        };
         SDL_RenderFillRect(media.r, &bg_rect);
 
+        /* 'You win' text TODO: Unhardcode all of this */
         SDL_SetRenderDrawColor(media.r, 255, 100, 100, 255);
-        SDL_Rect rect = {STAGE_START_X + STAGE_WIDTH_X/2 - 200/2 - 3, STAGE_START_Y + STAGE_HEIGHT_Y/2 - 100/2 + 3, 200, 100};
+        SDL_Rect rect = {
+            board_start_x(b) + board_width_x(b)/2 - 200/2 - 3,
+            board_start_y(b) + board_height_y(b)/2 - 100/2 + 3,
+            200,
+            100
+        };
         SDL_RenderCopy(media.r, win_text, NULL, &rect);
     }
 }
 
-void draw_frame(const Stage *stage) {
+void draw_frame(const Board *b) {
     SDL_SetRenderDrawColor(media.r, media.bg.r, media.bg.g, media.bg.b, media.bg.a);
     SDL_RenderClear(media.r);
 
-    render_stage(stage);
-    render_game_state(stage);
+    render_stage(b);
+    render_game_state(b);
 
     SDL_RenderPresent(media.r);
 }
