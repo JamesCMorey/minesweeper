@@ -20,14 +20,17 @@ void board_print(Board *b) {
     }
 }
 
+static inline bool board_valid_tile(const Board *b, int row, int col) {
+    if ((row < 0 || b->rows <= row)     /* Invalid row */
+        || (col < 0 || b->cols <= col)) /* Invalid col */
+        return false;
+    return true;
+}
+
 static inline void increment_surround(Board *b, int row, int col) {
     for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
-            if (i + row < 0 || b->rows <= i + row) /* Invalid row */
-                continue;
-            if (j + col < 0 || b->cols <= j + col) /* Invalid col */
-                continue;
-            if (!(i || j)) /* Center tile */
+            if (!(i || j) || !board_valid_tile(b, i + row, j + col))
                 continue;
 
             if (tile_num(b->board[row + i][col + j]) != 9)
@@ -97,11 +100,7 @@ static void board_auto_open(Board *b, int row, int col) {
 
     for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
-            if (b->cols <= i + row || i + row < 0) /* Invalid row */
-                continue;
-            if (b->rows <= j + col || j + col < 0) /* Invalid col */
-                continue;
-            if (!(i || j)) /* Center tile */
+            if (!(i || j) || !board_valid_tile(b, i + row, j + col))
                 continue;
 
             if (tile_num(b->board[row + i][col + j]) == 0
