@@ -1,7 +1,7 @@
 {
   description = "Minesweeper";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/release-23.11";
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
 
