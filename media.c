@@ -151,13 +151,6 @@ void resources_cleanup() {
 void render_stage(const Board *b) {
     for (int row = 0; row < b->rows; ++row) {
         for (int col = 0; col < b->cols; ++col) {
-            /* Outline selected tile */
-            //if (stage->selected.row == row && b->selected.col == col) {
-            //    SDL_SetRenderDrawColor(media.r, 128, 0, 0, 255);
-            //    SDL_Rect rect = {STAGE_START_X + OFFSET(col) - 2, STAGE_START_Y + OFFSET(row) - 2,
-            //                     TILE_SIZE + 4, TILE_SIZE + 4};
-            //    SDL_RenderFillRect(media.r, &rect);
-            //}
 
             /* Set tile color */
             if (board_opened(b, row, col)) SDL_SetRenderDrawColor(media.r, 128, 128, 128, 255);
@@ -219,7 +212,4 @@ void renderer_color(int r, int g, int b, int a) {
     media.bg.g = g;
     media.bg.b = b;
     media.bg.a = a;
-}
-
-void show_win() {
 }

@@ -27,23 +27,11 @@ typedef enum {
     STEP_BLOCKED
 } StepType;
 
-//typedef enum {
-//    MOVE_UP,
-//    MOVE_DOWN,
-//    MOVE_RIGHT,
-//    MOVE_LEFT
-//} MoveSelected;
-
-//typedef struct  {
-//    int row, col;
-//} Coords;
-
 typedef struct {
     int rows, cols;
     float density;
     int tiles_opened;
     Tile **board;
-//    Coords selected;
 } Board;
 
 bool board_flagged(const Board *b, int row, int col);
@@ -57,7 +45,5 @@ Board *board_new(int rows, int cols, float density);
 void board_toggle_flag(Board *b, int row, int col);
 StepType board_open(Board *b, int row, int col);
 Tile **board_read();
-//void move_selection(MoveSelected move);
-//Coords coords_selected();
 
 void board_print(Board *b);

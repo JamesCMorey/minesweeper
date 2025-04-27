@@ -62,8 +62,7 @@ Board *board_new(int rows, int cols, float density) {
             mines++;
         }
     }
-//    stage.selected.row = 0;
-//    stage.selected.col = 0;
+
     return b;
 }
 
@@ -118,28 +117,3 @@ static void board_auto_open(Board *b, int row, int col) {
         }
     }
 }
-
-//void move_selection(MoveSelected move) {
-//    switch(move) {
-//        case MOVE_UP:
-//            if (stage.selected.row > 0)
-//                --stage.selected.row;
-//            break;
-//        case MOVE_DOWN:
-//            if (stage.selected.row < STAGE_HEIGHT - 1)
-//                ++stage.selected.row;
-//            break;
-//        case MOVE_LEFT:
-//            if (stage.selected.col > 0)
-//                --stage.selected.col;
-//            break;
-//        case MOVE_RIGHT:
-//            if (stage.selected.col < STAGE_WIDTH - 1)
-//                ++stage.selected.col;
-//            break;
-//    }
-//}
-
-//Coords coords_selected() {
-//    return (Coords) { stage.selected.row, stage.selected.col };
-//}
