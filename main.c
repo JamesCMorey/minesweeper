@@ -8,7 +8,7 @@
 int main() {
 
     srand(time(NULL));
-    Board *b = board_new(10, 10, .20);
+    Board *b = board_new(10, 20, .20);
     board_print(b);
     media_init();
     resources_init();

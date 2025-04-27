@@ -78,35 +78,17 @@ void resources_init() {
         sprintf(num_str, "%d", i);
         SDL_Surface *surface;
 
-        #define SURFACE_COLOR(color) surface = TTF_RenderText_Blended(media.font, num_str, color)
+#define SURFACE_COLOR(color) surface = TTF_RenderText_Blended(media.font, num_str, color)
         switch(i) {
-            case 1:
-                SURFACE_COLOR(RED);
-                break;
-            case 2:
-                SURFACE_COLOR(GREEN);
-                break;
-            case 3:
-                SURFACE_COLOR(BLUE);
-                break;
-            case 4:
-                SURFACE_COLOR(PURPLE);
-                break;
-            case 5:
-                SURFACE_COLOR(CYAN);
-                break;
-            case 6:
-                SURFACE_COLOR(ORANGE);
-                break;
-            case 7:
-                SURFACE_COLOR(MAGENTA);
-                break;
-            case 8:
-                SURFACE_COLOR(YELLOW);
-                break;
-            default:
-                SURFACE_COLOR(RED);
-                break;
+            case 1: SURFACE_COLOR(RED); break;
+            case 2: SURFACE_COLOR(GREEN); break;
+            case 3: SURFACE_COLOR(BLUE); break;
+            case 4: SURFACE_COLOR(PURPLE); break;
+            case 5: SURFACE_COLOR(CYAN); break;
+            case 6: SURFACE_COLOR(ORANGE); break;
+            case 7: SURFACE_COLOR(MAGENTA); break;
+            case 8: SURFACE_COLOR(YELLOW); break;
+            default: SURFACE_COLOR(RED); break;
         }
 
         if (!surface) {

@@ -23,9 +23,9 @@ void board_print(Board *b) {
 static inline void increment_surround(Board *b, int row, int col) {
     for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
-            if (b->cols <= i + row || i + row < 0) /* Invalid row */
+            if (i + row < 0 || b->rows <= i + row) /* Invalid row */
                 continue;
-            if (b->rows <= j + col || j + col < 0) /* Invalid col */
+            if (j + col < 0 || b->cols <= j + col) /* Invalid col */
                 continue;
             if (!(i || j)) /* Center tile */
                 continue;
